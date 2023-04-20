@@ -6,36 +6,29 @@ import (
 	"time"
 
 	"github.com/olihough86/transformers-go/pkg/models/gpt2"
+	"github.com/olihough86/transformers-go/utils"
 	"gonum.org/v1/gonum/mat"
 )
 
 func main() {
-	// Set the random seed for reproducibility
-	rand.Seed(time.Now().UnixNano())
+	// Load the GPT2 config
+	config := gpt2.NewGPT2Config()
 
-	// Set some example hyperparameters
-	hiddenSize := 768
-	nHead := 12
-	inputLength := 10
-	//batchSize := 1
+	// Create a new GPT2 model
+	model := gpt2.NewGPT2Model(config)
 
-	// Create a TransformerLayer instance
-	tLayer := gpt2.NewTransformerLayer(hiddenSize, nHead)
+	// Load the model weights
+	weightsFile := "/home/nisnet/gpt2/pytorch_model.bin"
+	weights, err := utils.LoadWeights(weightsFile)
+	if err != nil {
+		fmt.Println("Error loading weights:", err)
+		return
+	}
 
-	// Generate a random input matrix
-	input := mat.NewDense(inputLength, hiddenSize, randomArray(inputLength*hiddenSize, 0.0, 0.01))
+	// Set the weights in the model
+	model.SetWeights(weights)
 
-	// Generate a random mask matrix
-	qRows, _ := input.Dims()
-	kRows, _ := input.Dims()
-	mask := randomBinaryMask(qRows, kRows)
-
-	// Perform a forward pass through the TransformerLayer
-	output := tLayer.Forward(input, mask)
-
-	// Print the output matrix
-	fmt.Println("Output matrix:")
-	fmt.Println(mat.Formatted(output))
+	// Your code to use the GPT2 model
 }
 
 func randomArray(size int, mean float64, stddev float64) []float64 {
@@ -55,4 +48,3 @@ func randomBinaryMask(rows, cols int) *mat.Dense {
 	}
 	return mask
 }
-

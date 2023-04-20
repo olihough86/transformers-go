@@ -3,6 +3,7 @@ package gpt2
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 )
 
 type GPT2Config struct {
@@ -16,17 +17,23 @@ type GPT2Config struct {
     ActivationFunction string `json:"activation_function"`
 }
 
-func LoadConfig(path string) (*GPT2Config, error) {
-	data, err := ioutil.ReadFile(path)
+func LoadConfig(configFile string) (*GPT2Config, error) {
+	file, err := os.Open(configFile)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
 
-	var config GPT2Config
-	err = json.Unmarshal(data, &config)
+	var config Config
+	err = json.Unmarshal(bytes, &config)
 	if err != nil {
 		return nil, err
-	} 
+	}
 
 	return &config, nil
 }

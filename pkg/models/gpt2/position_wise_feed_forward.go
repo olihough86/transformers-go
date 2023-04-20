@@ -63,4 +63,3 @@ func gelu(x float64) float64 {
 func activationFunction(_, _ int, v float64) float64 {
     return gelu(v)
 }
-

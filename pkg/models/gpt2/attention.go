@@ -19,47 +19,67 @@ type MultiHeadAttention struct {
 }
 
 func scaledDotProductAttention(q, k, v, mask *mat.Dense, dHead int) *mat.Dense {
-	// Calculate Q * K^T
-	kt := mat.DenseCopyOf(k.T())
-	qk := mat.Dense{}
-	qk.Mul(q, kt)
+    // Calculate Q * K^T
+    kt := mat.DenseCopyOf(k.T())
 
-	// Scale the dot products
-	scale := 1.0 / math.Sqrt(float64(dHead))
-	qk.Scale(scale, &qk)
+    // Add print statement to print Q and K dimensions
+    qRows, qCols := q.Dims()
+    kRows, kCols := k.Dims()
+    fmt.Printf("Q dims: %d x %d\n", qRows, qCols)
+    fmt.Printf("K dims: %d x %d\n", kRows, kCols)
 
-	// Apply the mask if provided
+    qk := mat.Dense{}
+    qk.Mul(q, kt)
+
+    // Scale the dot products
+    scale := 1.0 / math.Sqrt(float64(dHead))
+    qk.Scale(scale, &qk)
+
+    // Apply the mask if provided
 	if mask != nil {
-		qk.Apply(func(i, j int, v float64) float64 {
-			return v + mask.At(i, j)
-		}, &qk)
+    // Add print statement to print mask dimensions
+    	maskRows, maskCols := mask.Dims()
+    	fmt.Printf("Mask dims: %d x %d\n", maskRows, maskCols)
+
+    	qk.Apply(func(i, j int, v float64) float64 {
+        	if mask.At(i, j) == 0 {
+            	return v - 1e9 // Apply a large negative number if the mask value is 0
+        	}
+        	return v
+    	}, &qk)
 	}
 
-	// Softmax
-	qk.Apply(func(_, _ int, v float64) float64 {
-		return math.Exp(v)
-	}, &qk)
 
-	rows, cols := qk.Dims()
-	sum := mat.NewDense(rows, cols, nil)
-	for i := 0; i < rows; i++ {
-		rowSum := 0.0
-		for j := 0; j < cols; j++ {
-			rowSum += qk.At(i, j)
-		}
-		for j := 0; j < cols; j++ {
-			sum.Set(i, j, rowSum)
-		}
-	}
+    // Softmax
+    qk.Apply(func(_, _ int, v float64) float64 {
+        return math.Exp(v)
+    }, &qk)
 
-	qk.DivElem(&qk, sum)
+    rows, cols := qk.Dims()
+    sum := mat.NewDense(rows, cols, nil)
+    for i := 0; i < rows; i++ {
+        rowSum := 0.0
+        for j := 0; j < cols; j++ {
+            rowSum += qk.At(i, j)
+        }
+        for j := 0; j < cols; j++ {
+            sum.Set(i, j, rowSum)
+        }
+    }
 
-	// Calculate the attended values: qk * V
-	attended := mat.Dense{}
-	attended.Mul(&qk, v)
+    qk.DivElem(&qk, sum)
 
-	return &attended
+    // Calculate the attended values: qk * V
+    attended := mat.Dense{}
+    attended.Mul(&qk, v)
+
+    // Add print statement to print attended dimensions
+    attendedRows, attendedCols := attended.Dims()
+    fmt.Printf("Attended dims: %d x %d\n", attendedRows, attendedCols)
+
+    return &attended
 }
+
 
 func NewMultiHeadAttention(hiddenSize, nHead int) *MultiHeadAttention {
 	dHead := hiddenSize / nHead
@@ -110,7 +130,7 @@ func (mha *MultiHeadAttention) SelfAttention(input *mat.Dense, mask *mat.Dense) 
 	// Compute the self-attention for each head
 	attendedHeads := make([]*mat.Dense, mha.nHead)
 	for i := 0; i < mha.nHead; i++ {
-		attendedHeads[i] = scaledDotProductAttention(queryHeads[i], keyHeads[i], valueHeads[i], mask, mha.dHead)
+		attendedHeads[i] = scaledDotProductAttention(queryHeads[i], keyHeads[i], valueHeads[i], nil, mha.dHead)
 	}
 
 	// Concatenate the attended heads
