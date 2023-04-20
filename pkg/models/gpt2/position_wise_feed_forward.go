@@ -53,9 +53,14 @@ func (pwff *PositionWiseFeedForward) Forward(input *mat.Dense) *mat.Dense {
     return output
 }
 
-
+func gelu(x float64) float64 {
+    c := 0.044715
+    term1 := 1.0 + math.Tanh(math.Sqrt(2.0/math.Pi)*(x+c*math.Pow(x, 3)))
+    term2 := x * (1.0 + math.Erf(x/math.Sqrt(2))) / 2
+    return term1 * term2
+}
 
 func activationFunction(_, _ int, v float64) float64 {
-	// Implement the activation function of your choice, e.g., ReLU or GeLU
-	return v * (1.0 / (1.0 + math.Exp(-v))) // This is an example of the sigmoid function
+    return gelu(v)
 }
+
