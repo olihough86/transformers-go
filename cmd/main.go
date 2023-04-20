@@ -17,20 +17,18 @@ func main() {
 	hiddenSize := 768
 	nHead := 12
 	inputLength := 10
-	batchSize := 1
+	//batchSize := 1
 
 	// Create a TransformerLayer instance
 	tLayer := gpt2.NewTransformerLayer(hiddenSize, nHead)
 
 	// Generate a random input matrix
-	input := mat.NewDense(batchSize*inputLength, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01))
+	input := mat.NewDense(inputLength, hiddenSize, randomArray(inputLength*hiddenSize, 0.0, 0.01))
 
 	// Generate a random mask matrix
 	qRows, _ := input.Dims()
 	kRows, _ := input.Dims()
-	mask := mat.NewDense(qRows, kRows, randomArray(qRows*kRows))
-
-
+	mask := randomBinaryMask(qRows, kRows)
 
 	// Perform a forward pass through the TransformerLayer
 	output := tLayer.Forward(input, mask)
@@ -40,10 +38,21 @@ func main() {
 	fmt.Println(mat.Formatted(output))
 }
 
-func randomArray(size int) []float64 {
+func randomArray(size int, mean float64, stddev float64) []float64 {
 	randArray := make([]float64, size)
 	for i := range randArray {
-		randArray[i] = rand.Float64() // Use a random number generator of your choice
+		randArray[i] = rand.NormFloat64()*stddev + mean // Use a random number generator of your choice
 	}
 	return randArray
 }
+
+func randomBinaryMask(rows, cols int) *mat.Dense {
+	mask := mat.NewDense(rows, cols, nil)
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			mask.Set(i, j, float64(rand.Intn(2))) // Generates either 0 or 1
+		}
+	}
+	return mask
+}
+

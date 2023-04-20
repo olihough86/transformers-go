@@ -25,19 +25,35 @@ func NewPositionWiseFeedForward(hiddenSize int) *PositionWiseFeedForward {
 }
 
 func (pwff *PositionWiseFeedForward) Forward(input *mat.Dense) *mat.Dense {
-	hidden := mat.Dense{}
-	hidden.Mul(input, pwff.w1)
-	hidden.Add(&hidden, pwff.b1)
+    inputRows, inputCols := input.Dims()
 
-	// Apply the activation function (e.g., ReLU or GeLU)
-	hidden.Apply(activationFunction, &hidden)
+    hidden := mat.NewDense(inputRows, inputCols, nil)
+    hidden.Mul(input, pwff.w1)
 
-	output := mat.Dense{}
-	output.Mul(&hidden, pwff.w2)
-	output.Add(&output, pwff.b2)
+    // Broadcast the addition of the bias matrix b1 across the rows of the hidden matrix
+    b1Vec := pwff.b1.RowView(0).(*mat.VecDense) // Convert b1 to a *mat.VecDense
+    for i := 0; i < inputRows; i++ {
+        row := hidden.RowView(i).(*mat.VecDense) // Convert the row to a *mat.VecDense
+        row.AddVec(row, b1Vec)
+    }
 
-	return &output
+    // Apply the activation function (e.g., ReLU or GeLU)
+    hidden.Apply(activationFunction, hidden)
+
+    output := mat.NewDense(inputRows, inputCols, nil)
+    output.Mul(hidden, pwff.w2)
+
+    // Broadcast the addition of the bias matrix b2 across the rows of the output matrix
+    b2Vec := pwff.b2.RowView(0).(*mat.VecDense) // Convert b2 to a *mat.VecDense
+    for i := 0; i < inputRows; i++ {
+        row := output.RowView(i).(*mat.VecDense) // Convert the row to a *mat.VecDense
+        row.AddVec(row, b2Vec)
+    }
+
+    return output
 }
+
+
 
 func activationFunction(_, _ int, v float64) float64 {
 	// Implement the activation function of your choice, e.g., ReLU or GeLU
