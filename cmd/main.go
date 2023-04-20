@@ -23,10 +23,14 @@ func main() {
 	tLayer := gpt2.NewTransformerLayer(hiddenSize, nHead)
 
 	// Generate a random input matrix
-	input := mat.NewDense(batchSize, inputLength*hiddenSize, randomArray(batchSize*inputLength*hiddenSize))
+	input := mat.NewDense(batchSize*inputLength, hiddenSize, randomArray(batchSize*inputLength*hiddenSize))
 
 	// Generate a random mask matrix
-	mask := mat.NewDense(batchSize, inputLength, randomArray(batchSize*inputLength))
+	qRows, _ := input.Dims()
+	kRows, _ := input.Dims()
+	mask := mat.NewDense(qRows, kRows, randomArray(qRows*kRows))
+
+
 
 	// Perform a forward pass through the TransformerLayer
 	output := tLayer.Forward(input, mask)
