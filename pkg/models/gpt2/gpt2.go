@@ -7,10 +7,10 @@ import (
 )
 
 type GPT2Model struct {
-	Config            *GPT2Config
-	TransformerLayers []*TransformerLayer
-	EmbeddingLayer    *EmbeddingLayer
-	layerNorm         *LayerNorm
+    Config           *GPT2Config
+    TransformerLayers []*TransformerLayer
+    EmbeddingLayer    *EmbeddingLayer
+    LayerNorm         *LayerNorm
 }
 
 func (m *GPT2Model) SetLayerNormWeights(weight, bias *mat.Dense) {
@@ -24,13 +24,13 @@ func NewGPT2Model(config *GPT2Config) *GPT2Model {
     }
 
     embeddingLayer := NewEmbeddingLayer(config.VocabSize, config.HiddenSize)
-    layerNorm := NewLayerNorm(config.HiddenSize) // Initialize the LayerNorm
+    layerNorm := NewLayerNorm(config.HiddenSize)
 
     return &GPT2Model{
         Config:           config,
         TransformerLayers: transformerLayers,
         EmbeddingLayer:    embeddingLayer,
-        LayerNorm:         layerNorm, // Set the LayerNorm field
+        LayerNorm:         layerNorm,
     }
 }
 

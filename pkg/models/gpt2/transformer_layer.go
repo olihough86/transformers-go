@@ -5,19 +5,31 @@ import (
 )
 
 type TransformerLayer struct {
-	mha             *MultiHeadAttention
-	attentionNorm   *LayerNorm
-	ffn             *PositionWiseFeedForward
-	feedForwardNorm *LayerNorm
+    SelfAttention *SelfAttention
+    FeedForward   *PositionWiseFeedForward
+    LayerNorm1    *LayerNorm
+    LayerNorm2    *LayerNorm
 }
 
-func NewTransformerLayer(hiddenSize, nHead int) *TransformerLayer {
-	return &TransformerLayer{
-		mha:             NewMultiHeadAttention(hiddenSize, nHead),
-		attentionNorm:   NewLayerNorm(hiddenSize),
-		ffn:             NewPositionWiseFeedForward(hiddenSize),
-		feedForwardNorm: NewLayerNorm(hiddenSize),
-	}
+func NewTransformerLayer(hiddenSize, numHeads int) *TransformerLayer {
+    selfAttention := NewSelfAttention(hiddenSize, numHeads)
+    feedForward := NewPositionWiseFeedForward(hiddenSize)
+    layerNorm1 := NewLayerNorm(hiddenSize)
+    layerNorm2 := NewLayerNorm(hiddenSize)
+
+    return &TransformerLayer{
+        SelfAttention: selfAttention,
+        FeedForward:   feedForward,
+        LayerNorm1:    layerNorm1,
+        LayerNorm2:    layerNorm2,
+    }
+}
+
+func (t *TransformerLayer) SetWeights(weights map[string]*mat.Dense, layerKey string) {
+    t.SelfAttention.SetWeights(weights, layerKey+".attn")
+    t.FeedForward.SetWeights(weights, layerKey+".mlp")
+    t.LayerNorm1.SetWeights(weights[layerKey+".ln_1.weight"], weights[layerKey+".ln_1.bias"])
+    t.LayerNorm2.SetWeights(weights[layerKey+".ln_2.weight"], weights[layerKey+".ln_2.bias"])
 }
 
 func (tl *TransformerLayer) Forward(input *mat.Dense, mask *mat.Dense) *mat.Dense {

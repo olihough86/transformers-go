@@ -11,12 +11,6 @@ type EmbeddingLayer struct {
 func (e *EmbeddingLayer) SetWeights(weights map[string]*mat.Dense) {
     	e.weights = weights["wte"]
 }
-func (t *TransformerLayer) SetWeights(weights map[string]*mat.Dense, layerKey string) {
-    	t.SelfAttention.SetWeights(weights, layerKey+".attn")
-    	t.FeedForward.SetWeights(weights, layerKey+".mlp")
-    	t.LayerNorm1.SetWeights(weights[layerKey+".ln_1.weight"], weights[layerKey+".ln_1.bias"])
-    	t.LayerNorm2.SetWeights(weights[layerKey+".ln_2.weight"], weights[layerKey+".ln_2.bias"])
-}
 
 func NewEmbeddingLayer(vocabSize, embeddingSize int) *EmbeddingLayer {
 	return &EmbeddingLayer{

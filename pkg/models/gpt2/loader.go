@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"strings"
+	"fmt"
 
 	"gonum.org/v1/gonum/mat"
 	"gorgonia.org/tensor"
 )
 
-func extractWeights(checkpoint map[string]interface{}) (map[string]*mat.Dense, error) {
+func extractWeights(checkpoint map[string]*mat.Dense) (map[string]*mat.Dense, error) {
 	weights := make(map[string]*mat.Dense)
 
 	for key, value := range checkpoint {
@@ -55,10 +57,10 @@ func LoadGPT2Model(configFile string, checkpointFile string) (*GPT2Model, error)
 	model := NewGPT2Model(config)
 
 	// Set the weights for each layer using the extracted weights
-	err = model.SetWeights(weights)
-	if err != nil {
-		return nil, err
-	}
+	//err = model.SetWeights(weights)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return model, nil
 }
