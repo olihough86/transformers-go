@@ -13,8 +13,8 @@ type LayerNorm struct {
 
 func NewLayerNorm(hiddenSize int) *LayerNorm {
 	return &LayerNorm{
-		gain: mat.NewDense(1, hiddenSize, randomArray(hiddenSize)),
-		bias: mat.NewDense(1, hiddenSize, randomArray(hiddenSize)),
+		gain: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, 0.0, 0.01)),
+		bias: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, 0.0, 0.01)),
 		eps:  1e-5,
 	}
 }
@@ -24,7 +24,10 @@ func (ln *LayerNorm) AddAndNorm(a, b *mat.Dense) *mat.Dense {
 	sum.Add(a, b)
 	mean, variance := meanAndVariance(&sum)
 	norm := mat.Dense{}
-	norm.Sub(&sum, mean)
+	norm.Apply(func(i, j int, v float64) float64 {
+		return v - mean.At(i, 0)
+	}, &sum)
+
 
 	// Compute the square root element-wise
 	sqrtVariance := mat.Dense{}
@@ -37,9 +40,18 @@ func (ln *LayerNorm) AddAndNorm(a, b *mat.Dense) *mat.Dense {
 		return v + ln.eps
 	}, &sqrtVariance)
 
-	norm.DivElem(&norm, &sqrtVariance)
-	norm.MulElem(&norm, ln.gain)
-	norm.Add(&norm, ln.bias)
+	norm.Apply(func(i, j int, v float64) float64 {
+		return v / sqrtVariance.At(i, 0)
+	}, &norm)
+	norm.Apply(func(i, j int, v float64) float64 {
+		return v * ln.gain.At(0, j)
+	}, &norm)
+	norm.Apply(func(i, j int, v float64) float64 {
+		return v + ln.bias.At(0, j)
+	}, &norm)
+ 	norm.Apply(func(i, j int, v float64) float64 {
+		return v + ln.bias.At(0, j)
+	}, &norm)
 	return &norm
 }
 

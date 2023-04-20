@@ -13,11 +13,14 @@ type PositionWiseFeedForward struct {
 }
 
 func NewPositionWiseFeedForward(hiddenSize int) *PositionWiseFeedForward {
+	mean := 0.0
+	stddev := 0.01
+
 	return &PositionWiseFeedForward{
-		w1: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
-		w2: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
-		b1: mat.NewDense(1, hiddenSize, randomArray(hiddenSize)),
-		b2: mat.NewDense(1, hiddenSize, randomArray(hiddenSize)),
+		w1: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
+		w2: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
+		b1: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
+		b2: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
 	}
 }
 

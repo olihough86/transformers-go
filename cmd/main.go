@@ -23,7 +23,7 @@ func main() {
 	tLayer := gpt2.NewTransformerLayer(hiddenSize, nHead)
 
 	// Generate a random input matrix
-	input := mat.NewDense(batchSize*inputLength, hiddenSize, randomArray(batchSize*inputLength*hiddenSize))
+	input := mat.NewDense(batchSize*inputLength, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01))
 
 	// Generate a random mask matrix
 	qRows, _ := input.Dims()

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"time"
 
 	"gonum.org/v1/gonum/mat"
 )
@@ -67,19 +68,20 @@ func NewMultiHeadAttention(hiddenSize, nHead int) *MultiHeadAttention {
 		dHead: dHead,
 		// Initialize the projection matrices with random values.
 		// You'll replace these with the actual pre-trained weights later.
-		queryProjection: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
-		keyProjection:   mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
-		valueProjection: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
-		outProjection:   mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize)),
+		queryProjection: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01)),
+		keyProjection:   mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01)),
+		valueProjection: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01)),
+		outProjection:   mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize * hiddenSize, 0.0, 0.01)),
 	}
 }
 
-func randomArray(size int) []float64 {
-	randArray := make([]float64, size)
-	for i := range randArray {
-		randArray[i] = rand.Float64() // Use a random number generator of your choice
+func randomArray(size int, mean float64, stddev float64) []float64 {
+	rand.Seed(time.Now().UnixNano())
+	arr := make([]float64, size)
+	for i := range arr {
+		arr[i] = mean + stddev*rand.NormFloat64()
 	}
-	return randArray
+	return arr
 }
 
 func (mha *MultiHeadAttention) SelfAttention(input *mat.Dense, mask *mat.Dense) *mat.Dense {
