@@ -47,7 +47,6 @@ This is not a try hard effort to port Tranformers, I have no aim to maintain a l
 │   └── tokenizers
 ├── the_prompt
 └── tokenizers
-<<<<<<< HEAD
 
 11 directories, 15 files
 
