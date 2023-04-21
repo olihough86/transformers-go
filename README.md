@@ -53,7 +53,6 @@ This is not a try hard effort to port Tranformers, I have no aim to maintain a l
 
 =======
 ```
->>>>>>> d85c5fdf37b8e4a4b526bb2047b8cf2ee0ef006c
 ## The great containering
 
 Due to needing a very stable and clean dev enronment, in the net day or so a Dockerfile will be created to keep everything nice and clean.
