@@ -68,7 +68,7 @@ func (model *GPT2Model) Forward(input *mat.Dense, mask *mat.Dense) *mat.Dense {
 	return transformerOutput
 }
 
-func (m *GPT2Model) SetWeights(weights map[string]*mat.Dense) {
+func (m *GPT2Model) SetWeights(weights map[string]*mat.Dense) error {
     // Set the weights for the embedding layer
     m.EmbeddingLayer.SetWeights(weights)
 
@@ -80,4 +80,5 @@ func (m *GPT2Model) SetWeights(weights map[string]*mat.Dense) {
 
     // Set the weights for the layer norm
     m.SetLayerNormWeights(weights["ln_f.weight"], weights["ln_f.bias"])
+    return nil
 }

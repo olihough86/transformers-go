@@ -29,7 +29,7 @@ func LoadConfig(configFile string) (*GPT2Config, error) {
 		return nil, err
 	}
 
-	var config Config
+	var config GPT2Config
 	err = json.Unmarshal(bytes, &config)
 	if err != nil {
 		return nil, err

@@ -15,6 +15,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/flatbuffers v23.3.3+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/wangkuiyi/gotorch v0.0.0-20201028015551-9afed2f3ad7b // indirect
 	github.com/xtgo/set v1.0.0 // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20230221090011-e4bae7ad2296 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect

@@ -6,9 +6,10 @@ import (
 )
 
 type LayerNorm struct {
-	gain *mat.Dense
-	bias *mat.Dense
-	eps  float64
+	gain   *mat.Dense
+	bias   *mat.Dense
+	weight *mat.Dense
+	eps    float64
 }
 
 func NewLayerNorm(hiddenSize int) *LayerNorm {
@@ -17,6 +18,11 @@ func NewLayerNorm(hiddenSize int) *LayerNorm {
 		bias: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, 0.0, 0.01)),
 		eps:  1e-5,
 	}
+}
+
+func (ln *LayerNorm) SetWeights(weight, bias *mat.Dense) {
+	ln.weight = weight
+	ln.bias = bias
 }
 
 func (ln *LayerNorm) AddAndNorm(a, b *mat.Dense) *mat.Dense {

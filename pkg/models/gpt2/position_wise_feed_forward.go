@@ -1,27 +1,34 @@
 package gpt2
 
 import (
-	"gonum.org/v1/gonum/mat"
-	"math"
+    "gonum.org/v1/gonum/mat"
+    "math"
 )
 
 type PositionWiseFeedForward struct {
-	w1 *mat.Dense
-	w2 *mat.Dense
-	b1 *mat.Dense
-	b2 *mat.Dense
+    w1 *mat.Dense
+    w2 *mat.Dense
+    b1 *mat.Dense
+    b2 *mat.Dense
 }
 
 func NewPositionWiseFeedForward(hiddenSize int) *PositionWiseFeedForward {
-	mean := 0.0
-	stddev := 0.01
+    mean := 0.0
+    stddev := 0.01
 
-	return &PositionWiseFeedForward{
-		w1: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
-		w2: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
-		b1: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
-		b2: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
-	}
+    return &PositionWiseFeedForward{
+        w1: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
+        w2: mat.NewDense(hiddenSize, hiddenSize, randomArray(hiddenSize*hiddenSize, mean, stddev)),
+        b1: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
+        b2: mat.NewDense(1, hiddenSize, randomArray(hiddenSize, mean, stddev)),
+    }
+}
+
+func (pwff *PositionWiseFeedForward) SetWeights(weights map[string]*mat.Dense, layerKey string) {
+    pwff.w1 = weights[layerKey+".c_fc.weight"]
+    pwff.b1 = weights[layerKey+".c_fc.bias"]
+    pwff.w2 = weights[layerKey+".c_proj.weight"]
+    pwff.b2 = weights[layerKey+".c_proj.bias"]
 }
 
 func (pwff *PositionWiseFeedForward) Forward(input *mat.Dense) *mat.Dense {

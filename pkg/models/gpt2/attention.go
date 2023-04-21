@@ -10,12 +10,23 @@ import (
 )
 
 type MultiHeadAttention struct {
+	WQ *mat.Dense
+	WK *mat.Dense
+	WV *mat.Dense
+	WO *mat.Dense
 	queryProjection *mat.Dense
 	keyProjection   *mat.Dense
 	valueProjection *mat.Dense
 	outProjection   *mat.Dense
 	nHead           int
 	dHead           int
+}
+
+func (mha *MultiHeadAttention) SetWeights(weights map[string]*mat.Dense, layerKey string) {
+	mha.WQ = weights[layerKey+".q_proj.weight"]
+	mha.WK = weights[layerKey+".k_proj.weight"]
+	mha.WV = weights[layerKey+".v_proj.weight"]
+	mha.WO = weights[layerKey+".o_proj.weight"]
 }
 
 func scaledDotProductAttention(q, k, v, mask *mat.Dense, dHead int) *mat.Dense {
