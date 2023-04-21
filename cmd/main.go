@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
 
 	"github.com/olihough86/transformers-go/pkg/models/gpt2"
 	"gonum.org/v1/gonum/mat"
