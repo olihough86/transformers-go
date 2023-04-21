@@ -20,7 +20,7 @@ The stage we are at is actually loading a Pytorch model as a .bin, this has prov
 This is not a try hard effort to port Tranformers, I have no aim to maintain a library, but this will be a fun learning experiance, I have inclued in 'the_plan' a prompt which can be use to initialize GPT-4 with the important details.
 
 ### Project tree
-
+```
 ├── cmd
 │   ├── example
 │   │   └── main.go
@@ -47,9 +47,13 @@ This is not a try hard effort to port Tranformers, I have no aim to maintain a l
 │   └── tokenizers
 ├── the_prompt
 └── tokenizers
+<<<<<<< HEAD
 
 11 directories, 15 files
 
+=======
+```
+>>>>>>> d85c5fdf37b8e4a4b526bb2047b8cf2ee0ef006c
 ## The great containering
 
 Due to needing a very stable and clean dev enronment, in the net day or so a Dockerfile will be created to keep everything nice and clean.
