@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"gonum.org/v1/gonum/mat"
-	"github.com/wangkuiyi/gotorch"
+	"github.com/olihough86/transformers-go/pkg/pytorch" // Import the pytorch package
 )
 
 func extractWeights(checkpoint map[string]*mat.Dense) (map[string]*mat.Dense, error) {
@@ -33,13 +33,13 @@ func LoadGPT2Model(configFile string, checkpointFile string) (*GPT2Model, error)
 	}
 
 	// Load the checkpoint file
-	checkpoint, err := loadTorchCheckpoint(checkpointFile)
+	checkpoint, err := pytorch.LoadCheckpoint(checkpointFile)
 	if err != nil {
 		return nil, err
 	}
 
 	// Extract the weights for each layer and component
-	weights, err := extractWeights(checkpoint)
+	weights, err := extractWeights(checkpoint.Weights)
 	if err != nil {
 		return nil, err
 	}
@@ -72,31 +72,4 @@ func computeWeightDimensions(key string) (int, int) {
         }
     }
     return 0, 0
-}
-
-func loadTorchCheckpoint(checkpointFile string) (map[string]*mat.Dense, error) {
-    // Load the PyTorch checkpoint
-    checkpointTorch := gotorch.Load(checkpointFile)
-
-    // Deserialize the state_dict
-    stateDict := make(map[string]*gotorch.Tensor)
-    err := checkpointTorch.To(stateDict)
-    if err != nil {
-        return nil, err
-    }
-
-    // Convert the gotorch.Tensor to a map[string]*mat.Dense
-    checkpoint := make(map[string]*mat.Dense)
-    for key, value := range stateDict {
-        checkpoint[key] = torchTensorToMatDense(value)
-    }
-
-    return checkpoint, nil
-}
-
-func torchTensorToMatDense(tensor *gotorch.Tensor) *mat.Dense {
-    shape := tensor.Shape()
-    rows, cols := shape[0], shape[1]
-    data := tensor.Totype(gotorch.Float64, true).([]float64)
-    return mat.NewDense(rows, cols, data)
 }
