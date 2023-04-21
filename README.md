@@ -22,33 +22,33 @@ This is not a try hard effort to port Tranformers, I have no aim to maintain a l
 ### Project tree
 
 ├── cmd
-│   ├── example
-│   │   └── main.go
-│   └── main.go
+│   ├── example
+│   │   └── main.go
+│   └── main.go
 ├── go.mod
 ├── go.sum
 ├── pkg
-│   ├── models
-│   │   └── gpt2
-│   │       ├── attention.go
-│   │       ├── config.go
-│   │       ├── embedding_layer.go
-│   │       ├── gpt2.go
-│   │       ├── layer_norm.go
-│   │       ├── loader.go
-│   │       ├── position_wise_feed_forward.go
-│   │       └── transformer_layer.go
-│   └── utils
-│       └── utils.go
+│   └── models
+│       └── gpt2
+│           ├── attention.go
+│           ├── config.go
+│           ├── embedding_layer.go
+│           ├── gpt2.go
+│           ├── layer_norm.go
+│           ├── loader.go
+│           ├── position_wise_feed_forward.go
+│           └── transformer_layer.go
 ├── prepostprocessors
 ├── README.md
 ├── test
-│   ├── models
-│   │   └── test_gpt2.go
-│   ├── prepostprocessors
-│   └── tokenizers
-├── the_plan
+│   ├── models
+│   │   └── test_gpt2.go
+│   ├── prepostprocessors
+│   └── tokenizers
+├── the_prompt
 └── tokenizers
+
+11 directories, 15 files
 
 ## The great containering
 

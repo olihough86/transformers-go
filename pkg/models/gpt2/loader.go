@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"gonum.org/v1/gonum/mat"
-	"github.com/olihough86/transformers-go/pkg/pytorch" // Import the pytorch package
 )
 
 func extractWeights(checkpoint map[string]*mat.Dense) (map[string]*mat.Dense, error) {
